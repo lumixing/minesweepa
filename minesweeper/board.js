@@ -130,7 +130,7 @@ class Board {
 			for (let col = 0; col < this.size[1]; col++) {
 				let cell = this.getCellAt(row, col);
 				let image = await imagesObject[cell.name];
-
+				// exp comment
 				pos = [pos[0] + size, pos[1]];
 				ctx.drawImage(image, pos[0], pos[1], size, size);
 
