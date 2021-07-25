@@ -110,7 +110,7 @@ class Board {
 		});
 
 		// size of each cell
-		let size = Math.min(512 / (this.size[0]), 512 / (this.size[1]));
+		let size = Math.min(512 / (this.size[0] + 1), 512 / (this.size[1] + 1));
 		let pos = [0, 0];
 
 		for (let row = -1; row < this.size[0]; row++) {
