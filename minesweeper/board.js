@@ -103,6 +103,7 @@ class Board {
 
 		const imagesObject = {};
 
+		// load images from assets folder
 		readdirSync("./assets").forEach(async (file) => {
 			let loadedImage = loadImage(`./assets/${file}`);
 			imagesObject[file.split(".")[0]] = loadedImage;
@@ -110,16 +111,29 @@ class Board {
 
 		let pos = [0, 0];
 		// size of each cell
-		let size = Math.min(512 / this.size[0], 512 / this.size[1]);
+		let size = Math.min(512 / (this.size[0] + 1), 512 / (this.size[1] + 1));
+		console.log(size);
+
+		let edge = await imagesObject["edge"];
+
+		for (let x = 0; x < this.size[0] + 1; x++) {
+			ctx.drawImage(edge, pos[0], pos[1], size, size);
+
+			pos = [pos[0] + size, pos[1]];
+		}
+
+		pos = [0, pos[1] + size];
 
 		for (let row = 0; row < this.size[0]; row++) {
+			ctx.drawImage(edge, pos[0], pos[1], size, size);
+
 			for (let col = 0; col < this.size[1]; col++) {
 				let cell = this.getCellAt(row, col);
 				let image = await imagesObject[cell.name];
 
+				pos = [pos[0] + size, pos[1]];
 				ctx.drawImage(image, pos[0], pos[1], size, size);
 
-				pos = [pos[0] + size, pos[1]];
 			}
 
 			pos = [0, pos[1] + size];
