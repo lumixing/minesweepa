@@ -109,31 +109,28 @@ class Board {
 			imagesObject[file.split(".")[0]] = loadedImage;
 		});
 
-		let pos = [0, 0];
 		// size of each cell
-		let size = Math.min(512 / (this.size[0] + 1), 512 / (this.size[1] + 1));
-		console.log(size);
+		let size = Math.min(512 / (this.size[0]), 512 / (this.size[1]));
+		let pos = [0, 0];
 
-		let edge = await imagesObject["edge"];
-
-		for (let x = 0; x < this.size[0] + 1; x++) {
-			ctx.drawImage(edge, pos[0], pos[1], size, size);
-
+		for (let row = -1; row < this.size[0]; row++) {
+			let image = await imagesObject["edge"];
+			ctx.drawImage(image, pos[0], pos[1], size, size);
 			pos = [pos[0] + size, pos[1]];
-		}
-
-		pos = [0, pos[1] + size];
-
-		for (let row = 0; row < this.size[0]; row++) {
-			ctx.drawImage(edge, pos[0], pos[1], size, size);
 
 			for (let col = 0; col < this.size[1]; col++) {
+				if (row === -1) {
+					let image = await imagesObject["edge"];
+					ctx.drawImage(image, pos[0], pos[1], size, size);
+					pos = [pos[0] + size, pos[1]];
+					continue;
+				}
+
 				let cell = this.getCellAt(row, col);
 				let image = await imagesObject[cell.name];
-				// exp comment
-				pos = [pos[0] + size, pos[1]];
-				ctx.drawImage(image, pos[0], pos[1], size, size);
 
+				ctx.drawImage(image, pos[0], pos[1], size, size);
+				pos = [pos[0] + size, pos[1]];
 			}
 
 			pos = [0, pos[1] + size];
