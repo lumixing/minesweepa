@@ -4,6 +4,7 @@ const { readdirSync } = require("fs");
 
 const prefix = "-";
 
+// initialize bot
 const bot = new Client({
 	fetchAllMembers: true,
 	presence: {
@@ -20,8 +21,10 @@ bot.aliases = new Collection();
 
 bot.games = {};
 
+// search commands folder
 const commandFiles = readdirSync("./commands").filter((file) => file.endsWith(".js"));
 
+// foreach file in commands folder, initialize command and aliases if any
 for (const file of commandFiles) {
 	const command = require(`./commands/${file}`);
 
@@ -39,10 +42,12 @@ bot.once("ready", () => {
 });
 
 bot.on("message", (msg) => {
+	// if doesnt start with prefix or is a bot, dont respond
 	if (!msg.content.startsWith(prefix) || msg.author.bot) {
 		return;
 	}
 
+	// if isnt a server text channel, dont respond
 	if (msg.channel.type !== "text") {
 		return;
 	}
@@ -50,6 +55,7 @@ bot.on("message", (msg) => {
 	const args = msg.content.slice(prefix.length).trim().split(/ +/);
 	const cmd = args.shift().toLowerCase();
 
+	// if command doesnt exist, dont respond
 	if (!bot.commands.has(cmd) && !bot.aliases.has(cmd)) {
 		return;
 	}
@@ -57,23 +63,13 @@ bot.on("message", (msg) => {
 	try {
 		const command = bot.commands.get(cmd) || bot.aliases.get(cmd);
 
-		const isOwner = msg.author.id === "235072703306924032";
-		const isServerOwner = msg.author.id === msg.guild.ownerID;
-		const isServerStaff = msg.member.roles.cache.find((role) => role.name === "Staff");
-
-		if (command.meta.category === "dev" && !isOwner) {
-			return;
-		}
-
-		if (command.meta.category === "moderation" && !isServerOwner && !isServerStaff) {
-			return;
-		}
-
+		// if commands needs arguements and user didnt provide any, give error
 		if (command.meta.argsRequired && !args.length) {
 			msg.reply("this command need arguements");
 			return;
 		}
 
+		// if all these checks pass, run the command
 		command.run(msg, args);
 	}
 	catch (err) {
