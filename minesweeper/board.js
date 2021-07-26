@@ -23,6 +23,7 @@ class Board {
 
 			for (let col = 0; col < this.size[1]; col++) {
 				let cell = new Cell("empty_clicked");
+				cell.revealed = false;
 				rowArray.push(cell);
 			}
 
@@ -68,6 +69,20 @@ class Board {
 
 	isValidCell(x, y) {
 		return (x >= 0 && x < this.size[0]) && (y >= 0 && y < this.size[1])
+	}
+
+	// converts alphanumeric coords (a, 1) to xy coords (0, 0)
+	alphanum2xy(letter, number) {
+		let lettersArray = "abcdefghijklmnopqrstuvwxyz";
+		lettersArray = lettersArray.split("");
+
+		let lettersObject = {};
+
+		lettersArray.forEach((l, i) => {
+			lettersObject[l] = [i];
+		});
+
+		return [lettersObject[letter], number - 1];
 	}
 
 	getNeighbours(x, y) {
@@ -129,7 +144,14 @@ class Board {
 				}
 
 				let cell = this.getCellAt(row, col);
-				let image = await imagesObject["cells/" + cell.name];
+				let image;
+
+				if (cell.revealed) {
+					image = await imagesObject["cells/" + cell.name];
+				}
+				else {
+					image = await imagesObject["cells/empty_unclicked"];
+				}
 
 				ctx.drawImage(image, pos[0], pos[1], size, size);
 				pos = [pos[0] + size, pos[1]];
