@@ -16,6 +16,7 @@ class Main {
 		this.initGame();
 
 		const game = new Game(msg);
+		game.games = this.games;
 	}
 
 	alreadyInGame() {
